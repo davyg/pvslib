@@ -65,6 +65,31 @@
  (eigenvector?_TCC1 0
   (eigenvector?_TCC1-1 nil 3627300815 ("" (subtype-tcc) nil nil) nil
    nil))
+ (inv_bij 0
+  (inv_bij-1 nil 3627921388 ("" (postpone) nil nil) nil shostak))
  (inv_vec_TCC1 0
-  (inv_vec_TCC1-1 nil 3627300815 ("" (subtype-tcc) nil nil) nil nil)))
+  (inv_vec_TCC1-1 nil 3627300815 ("" (subtype-tcc) nil nil) nil nil))
+ (eigen_chara 0
+  (eigen_chara-1 nil 3627915961
+   ("" (skolem-typepred)
+    (("" (expand chara)
+      (("" (skolem-typepred)
+        (("" (expand eigenvalue?)
+          (("" (lemma inv_vec)
+            (("" (instantiate -1 ("n!1" "(M!1 - (v!1 * Id(n!1)))"))
+              (("1" (replace -1 :dir RL)
+                (("1" (rewrite invertible_det)
+                  (("1" (assert)
+                    (("1" (expand /=) (("1" (propax) nil nil)) nil))
+                    nil))
+                  nil))
+                nil)
+               ("2" (delete 2) (("2" (postpone) nil nil)) nil))
+              nil))
+            nil))
+          nil))
+        nil))
+      nil))
+    nil)
+   nil shostak)))
 

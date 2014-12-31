@@ -28,7 +28,7 @@ BEGIN
 
   eigenvalue?(n)(M:SquareMatrix(n))(v:real): bool =
     EXISTS (x:VectorN(n)):
-      (NOT x = zero(n)) IMPLIES (M - (v*Id(n)))*x = zero(n)
+      (NOT x = zero(n)) AND (M - (v*Id(n)))*x = zero(n)
 
   eigenvector?(n)(M:SquareMatrix(n))(x:VectorN(n)): bool =
     EXISTS (v:real):
@@ -40,10 +40,14 @@ BEGIN
   
   surjection?(n)(M:SquareMatrix(n)) : bool = FORALL (y:VectorN(n)): EXISTS (x:VectorN(n)): M*x = y
 
-  inv_bij : LEMMA FORALL  (M:SquareMatrix(n)) : invertible?(M) = (injection?(n)(M) AND surjection?(n)(M))
+  inv_bij : LEMMA FORALL  (M:SquareMatrix(n)) : invertible?(M) IFF (injection?(n)(M) AND surjection?(n)(M))
 
-  inv_vec : LEMMA FORALL (M:SquareMatrix(n)) : (NOT invertible?(M)) = (EXISTS (x:VectorN(n)): (NOT x = zero(n)) IMPLIES M * x = zero(n))
+  sur_inj : LEMMA FORALL  (M:SquareMatrix(n)) : surjection?(n)(M) IFF injection?(n)(M)
+  
+  inv_inj : LEMMA FORALL  (M:SquareMatrix(n)) : invertible?(M) IFF injection?(n)(M)
 
-  eigen_chara : LEMMA FORALL (M:SquareMatrix(n)) (v:real): eigenvalue?(n)(M)(v) = (chara(n)(M)(v) = 0)
+  inv_vec : LEMMA FORALL (M:SquareMatrix(n)) : (NOT invertible?(M)) IFF (EXISTS (x:VectorN(n)): (NOT x = zero(n)) AND M * x = zero(n))
+
+  eigen_chara : LEMMA FORALL (M:SquareMatrix(n)) (v:real): eigenvalue?(n)(M)(v) IFF (chara(n)(M)(v) = 0)
  
 END reduction
