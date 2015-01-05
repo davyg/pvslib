@@ -6,25 +6,50 @@ BEGIN
   IMPORTING matrix_inv
 
   n: VAR nat
-  M: Var Matrix
+  M: Var FullMatrix
   v: Var Vector
 
-  matrix2vect(PFM:Matrix | columns(PFM)=1): { v:Vector|length(v)>0 AND rows(PFM)=length(v) } =
+  matrix2vect(PFM:FullMatrix | columns(PFM)=1): { v:Vector|length(v)>0 AND rows(PFM)=length(v) } =
     array2list[real](rows(PFM))(LAMBDA (p:nat): entry(PFM)(p,0))
 
-  matrix2vect_eq: LEMMA FORALL (M:Matrix | columns(M)=1, N:Matrix | columns(N)=1 AND rows(M) = rows(N)) :
+  matrix2vect_eq: LEMMA FORALL (M:FullMatrix | columns(M)=1, N:FullMatrix | columns(N)=1 AND rows(M) = rows(N)) :
     matrix2vect(M)=matrix2vect(N) IMPLIES
     M=N
 
-  mult_vec(M:Matrix, v:Vector | length(v) = rows(M)) : {x:Vector | length(x) = columns(M)} =
+  mult_vec(M:FullMatrix, v:Vector | length(v) = rows(M)) : {x:Vector | length(x) = columns(M)} =
     matrix2vect(M * vect2matrix(v));
   
-  *(M:Matrix,v:Vector | length(v) = rows(M)) : {x:Vector | length(x) = columns(M)} = mult_vec(M, v)
- 
+  *(M:FullMatrix,v:Vector | length(v) = rows(M)) : {x:Vector | length(x) = columns(M)} = mult_vec(M, v)
+
+  sub_zero : LEMMA FORALL (x:VectorN(n)): x - x = zero(n)
+
   mat_vec_sub : LEMMA FORALL (x, y:VectorN(n), M : SquareMatrix(n)):  M*(x-y) = M*x-M*y
+  assoc_vec : LEMMA FORALL (x:VectorN(n), M, N : SquareMatrix(n)):  M*(N*x) = (M*N)*x
+  length_mat_vec : LEMMA FORALL (x:VectorN(n), M:SquareMatrix(n)): length[real](M * x) = n
+  id_vec : LEMMA FORALL (x:VectorN(n)):  Id(n)*x = x
   scal_mat_assoc : LEMMA FORALL (x : real, M, N : SquareMatrix(n)): (x * M) * N = x * (M * N)
   scal_mat_assoc2 : LEMMA FORALL (x : real, M, N : SquareMatrix(n)): M * (x * N) = x * (M * N)
   mat_scal_assoc : LEMMA FORALL (x, y : real, M : SquareMatrix(n)): x * (y * M) = (x * y) * M
+
+  injection?(n)(M:SquareMatrix(n)) : bool = FORALL (x, y:VectorN(n)): M*x = M*y IMPLIES x = y
+
+  free?(M:FullMatrix) : RECURSIVE bool =
+    IF null?(M) THEN true
+    ELSE free?(cdr(M)) AND (FORALL (v:VectorN(columns(M)-1)) : cdr(M) * v /= car(M))  ENDIF
+    MEASURE length(M)
+  
+  surjection?(n)(M:SquareMatrix(n)) : bool = FORALL (y:VectorN(n)): EXISTS (x:VectorN(n)): M*x = y
+
+  inj_sur : LEMMA FORALL (M:SquareMatrix(n)) : injection?(n)(M) IMPLIES surjection?(n)(M)
+
+  inv_bij : LEMMA FORALL (M:SquareMatrix(n)) : invertible?(M) IMPLIES (injection?(n)(M) AND surjection?(n)(M))
+  bij_rinv : LEMMA FORALL (M:SquareMatrix(n)) : (injection?(n)(M) AND surjection?(n)(M)) IMPLIES
+    EXISTS (IQ:SquareMatrix(n)): M*IQ = Id(n)
+  
+  bij_inv : LEMMA FORALL (M:SquareMatrix(n)) : (injection?(n)(M) AND surjection?(n)(M)) IMPLIES invertible?(M)
+
+  inv_bij_iff : LEMMA FORALL (M:SquareMatrix(n)) : invertible?(M) IFF (injection?(n)(M) AND surjection?(n)(M))
+
 
   eigenvalue?(n)(M:SquareMatrix(n))(v:real): bool =
     EXISTS (x:VectorN(n)):
@@ -35,19 +60,9 @@ BEGIN
       (M - v*Id(n))*x = zero(n)
 
   chara(n)(M:SquareMatrix(n)) : [real -> real] = LAMBDA (X:real): det(M - X * Id(n))
-  
-  injection?(n)(M:SquareMatrix(n)) : bool = FORALL (x, y:VectorN(n)): M*x = M*y IMPLIES x = y
-  
-  surjection?(n)(M:SquareMatrix(n)) : bool = FORALL (y:VectorN(n)): EXISTS (x:VectorN(n)): M*x = y
-
-  inv_bij : LEMMA FORALL  (M:SquareMatrix(n)) : invertible?(M) IFF (injection?(n)(M) AND surjection?(n)(M))
-
-  sur_inj : LEMMA FORALL  (M:SquareMatrix(n)) : surjection?(n)(M) IFF injection?(n)(M)
-  
-  inv_inj : LEMMA FORALL  (M:SquareMatrix(n)) : invertible?(M) IFF injection?(n)(M)
 
   inv_vec : LEMMA FORALL (M:SquareMatrix(n)) : (NOT invertible?(M)) IFF (EXISTS (x:VectorN(n)): (NOT x = zero(n)) AND M * x = zero(n))
 
-  eigen_chara : LEMMA FORALL (M:SquareMatrix(n)) (v:real): eigenvalue?(n)(M)(v) IFF (chara(n)(M)(v) = 0)
+  eigen_chara : LEMMA FORALL (M:SquareMatrix(n)) (v:real): eigenvalue?(n)(M)(v) = (chara(n)(M)(v) = 0)
  
 END reduction
