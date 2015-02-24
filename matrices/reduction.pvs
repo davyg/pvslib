@@ -1,68 +1,103 @@
-reduction: THEORY
-BEGIN 
+
+bloc : THEORY BEGIN
 
   IMPORTING matrices
-  IMPORTING matrix_props
-  IMPORTING matrix_inv
 
-  n: VAR nat
-  M: Var FullMatrix
-  v: Var Vector
+  TL(n:nat)(M:SquareMatrix(n)) : SquareMatrix(n-1)
+  TR(n:nat)(M:SquareMatrix(n)) : VectorN(n-1)
+  BL(n:nat)(M:SquareMatrix(n)) : VectorN(n-1)
+  BR(n:nat)(M:SquareMatrix(n)) : real
 
-  matrix2vect(PFM:FullMatrix | columns(PFM)=1): { v:Vector|length(v)>0 AND rows(PFM)=length(v) } =
-    array2list[real](rows(PFM))(LAMBDA (p:nat): entry(PFM)(p,0))
+  BCons(n:nat)(TL:SquareMatrix(n-1), TR:VectorN(n-1), BL:VectorN(n-1), BR:real) : SquareMatrix(n)
 
-  matrix2vect_eq: LEMMA FORALL (M:FullMatrix | columns(M)=1, N:FullMatrix | columns(N)=1 AND rows(M) = rows(N)) :
-    matrix2vect(M)=matrix2vect(N) IMPLIES
-    M=N
+END bloc
 
-  mult_vec(M:FullMatrix, v:Vector | length(v) = rows(M)) : {x:Vector | length(x) = columns(M)} =
-    matrix2vect(M * vect2matrix(v));
+recursor : THEORY BEGIN
+
+  IMPORTING matrices
+
+  predSup(x:nat) : TYPE = { (n:nat, l:list[Square]) | n > 0 and length(l) = x and
+    forall (x:Square) : member(x, l) => rows(x) = n }
+
+  matRec : LEMMA forall (s:nat, P : [predSup(s) -> bool]) :
+    (forall (x:predSup(s)) : x`1 = 1 => P(x)) =>
+    (forall (n:nat) : (forall (x:predSup(s)) : x`1 = n => P(x)) =>
+       (forall (x:predSup(s)) : x`1 = n + 1 => P(x))) =>
+    (forall (x:predSup(s)) : P(x))
+
+END recursor
+
+% Contains all you need as soon as you specialized matrix with a n
+myMatrices[n:nat] : THEORY BEGIN
+  IMPORTING matrices
   
-  *(M:FullMatrix,v:Vector | length(v) = rows(M)) : {x:Vector | length(x) = columns(M)} = mult_vec(M, v)
+  SqMat : TYPE = SquareMatrix(n)
+  Id : SqMat = Id(n)
 
-  sub_zero : LEMMA FORALL (x:VectorN(n)): x - x = zero(n)
-
-  mat_vec_sub : LEMMA FORALL (x, y:VectorN(n), M : SquareMatrix(n)):  M*(x-y) = M*x-M*y
-  assoc_vec : LEMMA FORALL (x:VectorN(n), M, N : SquareMatrix(n)):  M*(N*x) = (M*N)*x
-  length_mat_vec : LEMMA FORALL (x:VectorN(n), M:SquareMatrix(n)): length[real](M * x) = n
-  id_vec : LEMMA FORALL (x:VectorN(n)):  Id(n)*x = x
-  scal_mat_assoc : LEMMA FORALL (x : real, M, N : SquareMatrix(n)): (x * M) * N = x * (M * N)
-  scal_mat_assoc2 : LEMMA FORALL (x : real, M, N : SquareMatrix(n)): M * (x * N) = x * (M * N)
-  mat_scal_assoc : LEMMA FORALL (x, y : real, M : SquareMatrix(n)): x * (y * M) = (x * y) * M
-
-  injection?(n)(M:SquareMatrix(n)) : bool = FORALL (x, y:VectorN(n)): M*x = M*y IMPLIES x = y
-
-  free?(M:FullMatrix) : RECURSIVE bool =
-    IF null?(M) THEN true
-    ELSE free?(cdr(M)) AND (FORALL (v:VectorN(columns(M)-1)) : cdr(M) * v /= car(M))  ENDIF
-    MEASURE length(M)
+  Vec  : TYPE = VectorN(n)
+  zero : Vec = zero(n)
+  NVec : TYPE = {x : Vec | x /= zero }
   
-  surjection?(n)(M:SquareMatrix(n)) : bool = FORALL (y:VectorN(n)): EXISTS (x:VectorN(n)): M*x = y
+  mult(M:SqMat, v:Vec) : Vec
 
-  inj_sur : LEMMA FORALL (M:SquareMatrix(n)) : injection?(n)(M) IMPLIES surjection?(n)(M)
+  * : [SqMat, Vec -> Vec] = mult
 
-  inv_bij : LEMMA FORALL (M:SquareMatrix(n)) : invertible?(M) IMPLIES (injection?(n)(M) AND surjection?(n)(M))
-  bij_rinv : LEMMA FORALL (M:SquareMatrix(n)) : (injection?(n)(M) AND surjection?(n)(M)) IMPLIES
-    EXISTS (IQ:SquareMatrix(n)): M*IQ = Id(n)
+  Diag : set[SqMat] = { M : SqMat | forall (i, j:below[n]) : (i /= j) => entry(M)(i, j) = 0 }
+
+END myMatrices
+
+eigen[n:nat] : THEORY BEGIN
+  IMPORTING myMatrices[n]
   
-  bij_inv : LEMMA FORALL (M:SquareMatrix(n)) : (injection?(n)(M) AND surjection?(n)(M)) IMPLIES invertible?(M)
+  spectrum(M:SqMat) : set[real] = {x : real | exists (v:NVec) : M * v = x * v }
 
-  inv_bij_iff : LEMMA FORALL (M:SquareMatrix(n)) : invertible?(M) IFF (injection?(n)(M) AND surjection?(n)(M))
+  eigenSpace(M:SqMat, x:real) : set[Vec] = {v : NVec |  M * v = x * v }
+END eigen
+
+stability[n:nat] : THEORY BEGIN
+  IMPORTING myMatrices[n]
+
+  stable?(M : SqMat, s:set[Vec]) : bool = forall (x : (s)) : member(M * x, s)
+
+END stability
+
+orthogonality[n:nat] : THEORY BEGIN
+  IMPORTING myMatrices[n]
+  
+  Orth : set[SqMat] = { M : SqMat | M * transpose(M) = Id }
+
+  orth(F : set[Vec]) : set[Vec] = { x : Vec | forall (y : (F)) : x * y = 0 }
+END orthogonality
+
+symmetry[n:nat] : THEORY BEGIN
+  IMPORTING myMatrices[n]
+  
+  Sym : set[SqMat] = { M : SqMat | M = transpose(M) }
+END symmetry
 
 
-  eigenvalue?(n)(M:SquareMatrix(n))(v:real): bool =
-    EXISTS (x:VectorN(n)):
-      (NOT x = zero(n)) AND (M - (v*Id(n)))*x = zero(n)
+% All reduction related proof
+reduction[n:nat] : THEORY BEGIN
 
-  eigenvector?(n)(M:SquareMatrix(n))(x:VectorN(n)): bool =
-    EXISTS (v:real):
-      (M - v*Id(n))*x = zero(n)
+  IMPORTING orthogonality
+  IMPORTING symmetry[n]
+  IMPORTING eigen[n]
+  IMPORTING stability[n]
+  IMPORTING recursor
+  IMPORTING bloc
+  
+  lem1 : LEMMA forall (M : (Sym)) :
+    forall (x, y : (spectrum(M))) : (x /= y) =>
+      forall (u : (eigenSpace(M, x))) (v : (eigenSpace(M, y))) :
+        u * v = 0
 
-  chara(n)(M:SquareMatrix(n)) : [real -> real] = LAMBDA (X:real): det(M - X * Id(n))
+  lem2 : LEMMA forall (M : (Sym)) :
+    forall (F:set[Vec]) :
+      stable?(M, F) => stable?(M, orth[n](F))
 
-  inv_vec : LEMMA FORALL (M:SquareMatrix(n)) : (NOT invertible?(M)) IFF (EXISTS (x:VectorN(n)): (NOT x = zero(n)) AND M * x = zero(n))
+  red : THEOREM
+    forall (S : (Sym)) :
+      exists (O : (Orth[n]), D : (Diag[n])) :
+        S = O * D * transpose(O)
 
-  eigen_chara : LEMMA FORALL (M:SquareMatrix(n)) (v:real): eigenvalue?(n)(M)(v) = (chara(n)(M)(v) = 0)
- 
 END reduction
