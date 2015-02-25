@@ -1,17 +1,3 @@
-
-bloc : THEORY BEGIN
-
-  IMPORTING matrices
-
-  TL(n:nat)(M:SquareMatrix(n)) : SquareMatrix(n-1)
-  TR(n:nat)(M:SquareMatrix(n)) : VectorN(n-1)
-  BL(n:nat)(M:SquareMatrix(n)) : VectorN(n-1)
-  BR(n:nat)(M:SquareMatrix(n)) : real
-
-  BCons(n:nat)(TL:SquareMatrix(n-1), TR:VectorN(n-1), BL:VectorN(n-1), BR:real) : SquareMatrix(n)
-
-END bloc
-
 recursor : THEORY BEGIN
 
   IMPORTING matrices
@@ -21,7 +7,7 @@ recursor : THEORY BEGIN
 
   matRec : LEMMA forall (s:nat, P : [predSup(s) -> bool]) :
     (forall (x:predSup(s)) : x`1 = 1 => P(x)) =>
-    (forall (n:nat) : (forall (x:predSup(s)) : x`1 = n => P(x)) =>
+    (forall (n:upfrom[1]) : (forall (x:predSup(s)) : x`1 = n => P(x)) =>
        (forall (x:predSup(s)) : x`1 = n + 1 => P(x))) =>
     (forall (x:predSup(s)) : P(x))
 
@@ -52,6 +38,7 @@ eigen[n:nat] : THEORY BEGIN
   spectrum(M:SqMat) : set[real] = {x : real | exists (v:NVec) : M * v = x * v }
 
   eigenSpace(M:SqMat, x:real) : set[Vec] = {v : NVec |  M * v = x * v }
+
 END eigen
 
 stability[n:nat] : THEORY BEGIN
@@ -62,11 +49,17 @@ stability[n:nat] : THEORY BEGIN
 END stability
 
 orthogonality[n:nat] : THEORY BEGIN
-  IMPORTING myMatrices[n]
+  IMPORTING eigen[n]
   
   Orth : set[SqMat] = { M : SqMat | M * transpose(M) = Id }
 
   orth(F : set[Vec]) : set[Vec] = { x : Vec | forall (y : (F)) : x * y = 0 }
+  
+  sim_eigen : LEMMA forall (M:SqMat, P:(Orth), x:real) :
+    spectrum(M)(x) IFF spectrum(transpose(P) * (M * P))(x)
+
+  orth_mul : LEMMA forall (P, Q:(Orth)) : Orth(P * Q)
+
 END orthogonality
 
 symmetry[n:nat] : THEORY BEGIN
@@ -75,17 +68,44 @@ symmetry[n:nat] : THEORY BEGIN
   Sym : set[SqMat] = { M : SqMat | M = transpose(M) }
 END symmetry
 
+bloc[n:nat] : THEORY BEGIN
 
-% All reduction related proof
-reduction[n:over[1]] : THEORY BEGIN
+  IMPORTING myMatrices
+  IMPORTING orthogonality[n]
 
+  TL(M:SquareMatrix(n)) : SqMat[n-1]
+  TR(M:SquareMatrix(n)) : Vec[n-1]
+  BL(M:SquareMatrix(n)) : Vec[n-1]
+  BR(M:SquareMatrix(n)) : real
+
+  BCons(TL:SqMat[n-1], TR:Vec[n-1], BL:Vec[n-1], BR:real) : SquareMatrix(n)
+
+  mul_diag_bloc : LEMMA forall (P, Q:SqMat[n-1], A, B : Vec[n-1], a, b:real) :
+    BCons(P, A, B, a) * BCons(Q, zero[n-1], zero[n-1], b) = BCons(P * Q, a * A, transpose(Q) * B, a * b)
+
+  transpose_bloc : LEMMA forall (P:SqMat[n-1], A, B : Vec[n-1], a:real) :
+    transpose(BCons(P, A, B, a)) = BCons(transpose(P), B, A, a)
+
+  rows_bloc : LEMMA forall (P:SqMat[n-1], A, B : Vec[n-1], a:real) :
+    rows(BCons(P, A, B, a)) = n
+
+  diag_bloc : LEMMA forall (P:(Diag), a:real) :
+    Diag(BCons(P, zero[n-1], zero[n-1], a))
+
+  orth_bloc : LEMMA forall (P:(Orth)) :
+    Orth(BCons(P, zero[n-1], zero[n-1], 1))
+END bloc
+
+lemmas[n:upfrom[1]] : THEORY BEGIN
   IMPORTING orthogonality
+  IMPORTING orthogonality[n]
+  IMPORTING symmetry
   IMPORTING symmetry[n]
   IMPORTING eigen[n]
   IMPORTING stability[n]
   IMPORTING recursor
   IMPORTING bloc
-  
+ 
   lem1 : LEMMA forall (M : (Sym)) :
     forall (x, y : (spectrum(M))) : (x /= y) =>
       forall (u : (eigenSpace(M, x))) (v : (eigenSpace(M, y))) :
@@ -95,9 +115,34 @@ reduction[n:over[1]] : THEORY BEGIN
     forall (F:set[Vec]) :
       stable?(M, F) => stable?(M, orth[n](F))
 
+  lem3 : LEMMA forall (D: (Diag[n-1]), G:VectorN(n-1), a:real) :
+    exists (x:real) : spectrum(BCons[n](D, G, G, a))(x)
+
+  lem4 : LEMMA forall (S:(Sym), x:real) :
+    spectrum(S)(x) IMPLIES
+      exists (O:(Orth), A:(Sym[n-1])) : S = O * (BCons[n](A, zero[n-1], zero[n-1], x) * transpose(O))
+
+
+  lem5 : LEMMA
+    forall (S : (Sym[1])) :
+      exists (O : (Orth[1]), D : (Diag[1])) :
+        S = O * (D * transpose(O))
+END lemmas
+
+% All reduction related proof
+reduction[n:upfrom[1]] : THEORY BEGIN
+  IMPORTING orthogonality
+  IMPORTING orthogonality[n]
+  IMPORTING symmetry[n]
+  IMPORTING eigen[n]
+  IMPORTING stability[n]
+  IMPORTING recursor
+  IMPORTING bloc
+  IMPORTING lemmas
+
   red : THEOREM
     forall (S : (Sym)) :
-      exists (O : (Orth[n]), D : (Diag[n])) :
-        S = O * D * transpose(O)
+      exists (O : (Orth), D : (Diag)) :
+        S = O * (D * transpose(O))
 
 END reduction
