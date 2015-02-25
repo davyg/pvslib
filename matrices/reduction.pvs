@@ -77,7 +77,7 @@ END symmetry
 
 
 % All reduction related proof
-reduction[n:nat] : THEORY BEGIN
+reduction[n:over[1]] : THEORY BEGIN
 
   IMPORTING orthogonality
   IMPORTING symmetry[n]
