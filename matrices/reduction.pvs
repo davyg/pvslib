@@ -28,6 +28,10 @@ myMatrices[n:nat] : THEORY BEGIN
 
   * : [SqMat, Vec -> Vec] = mult
 
+  real_zero : LEMMA forall (x:real) : x * zero = zero
+
+  mat_zero : LEMMA forall (M:SqMat) : M * zero = zero
+
   Diag : set[SqMat] = { M : SqMat | forall (i, j:below[n]) : (i /= j) => entry(M)(i, j) = 0 }
 
 END myMatrices
@@ -71,7 +75,7 @@ END symmetry
 bloc[n:nat] : THEORY BEGIN
 
   IMPORTING myMatrices
-  IMPORTING orthogonality[n]
+  IMPORTING orthogonality
 
   TL(M:SquareMatrix(n)) : SqMat[n-1]
   TR(M:SquareMatrix(n)) : Vec[n-1]
@@ -81,7 +85,7 @@ bloc[n:nat] : THEORY BEGIN
   BCons(TL:SqMat[n-1], TR:Vec[n-1], BL:Vec[n-1], BR:real) : SquareMatrix(n)
 
   mul_diag_bloc : LEMMA forall (P, Q:SqMat[n-1], A, B : Vec[n-1], a, b:real) :
-    BCons(P, A, B, a) * BCons(Q, zero[n-1], zero[n-1], b) = BCons(P * Q, a * A, transpose(Q) * B, a * b)
+    BCons(P, A, B, a) * BCons(Q, zero[n-1], zero[n-1], b) = BCons(P * Q, a * A, *[n-1](transpose(Q), B), a * b)
 
   transpose_bloc : LEMMA forall (P:SqMat[n-1], A, B : Vec[n-1], a:real) :
     transpose(BCons(P, A, B, a)) = BCons(transpose(P), B, A, a)
@@ -89,11 +93,16 @@ bloc[n:nat] : THEORY BEGIN
   rows_bloc : LEMMA forall (P:SqMat[n-1], A, B : Vec[n-1], a:real) :
     rows(BCons(P, A, B, a)) = n
 
-  diag_bloc : LEMMA forall (P:(Diag), a:real) :
+  columns_bloc : LEMMA forall (P:SqMat[n-1], A, B : Vec[n-1], a:real) :
+    columns(BCons(P, A, B, a)) = n
+
+  diag_bloc : LEMMA forall (P:(Diag[n-1]), a:real) :
     Diag(BCons(P, zero[n-1], zero[n-1], a))
 
-  orth_bloc : LEMMA forall (P:(Orth)) :
+  orth_bloc : LEMMA forall (P:(Orth[n-1])) :
     Orth(BCons(P, zero[n-1], zero[n-1], 1))
+
+  null_bloc : LEMMA forall (P:SqMat[n-1], A, B : Vec[n-1], a:real) : n = 0 IFF null?(BCons(P, A, B, a))
 END bloc
 
 lemmas[n:upfrom[1]] : THEORY BEGIN
