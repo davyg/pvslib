@@ -29,8 +29,11 @@ myMatrices[n:nat] : THEORY BEGIN
   * : [SqMat, Vec -> Vec] = mult
 
   real_zero : LEMMA forall (x:real) : x * zero = zero
+  
+  unit_vec : LEMMA forall (v:Vec) : 1 * v = v
 
   mat_zero : LEMMA forall (M:SqMat) : M * zero = zero
+  length_mat_vec : LEMMA forall (M:SqMat, v:Vec) : length(M * v) = n
 
   Diag : set[SqMat] = { M : SqMat | forall (i, j:below[n]) : (i /= j) => entry(M)(i, j) = 0 }
 
@@ -64,6 +67,7 @@ orthogonality[n:nat] : THEORY BEGIN
 
   orth_mul : LEMMA forall (P, Q:(Orth)) : Orth(P * Q)
 
+  orth_inv : LEMMA forall (P:(Orth)) : transpose(P) * P = Id
 END orthogonality
 
 symmetry[n:nat] : THEORY BEGIN
@@ -76,6 +80,7 @@ bloc[n:nat] : THEORY BEGIN
 
   IMPORTING myMatrices
   IMPORTING orthogonality
+  IMPORTING symmetry
 
   TL(M:SquareMatrix(n)) : SqMat[n-1]
   TR(M:SquareMatrix(n)) : Vec[n-1]
@@ -84,8 +89,25 @@ bloc[n:nat] : THEORY BEGIN
 
   BCons(TL:SqMat[n-1], TR:Vec[n-1], BL:Vec[n-1], BR:real) : SquareMatrix(n)
 
+  id_bloc : LEMMA forall (P:SqMat[n]) :
+    BCons(TL(P), TR(P), BL(P), BR(P)) = P
+
+  rows_TL : LEMMA forall (P:SqMat[n]) : rows(TL(P)) = n - 1
+  sym_TL : LEMMA forall (P:(Sym[n])) : Sym[n-1](TL(P))
+  diag_TL : LEMMA forall (P:(Diag[n])) : Diag[n-1](TL(P))
+  length_TR : LEMMA forall (P:SqMat[n]) : length(TR(P)) = n - 1
+  length_BL : LEMMA forall (P:SqMat[n]) : length(BL(P)) = n - 1
+
+  sym_TRBL : LEMMA forall (P:(Sym[n])) : TR(P) = BL(P)
+
+  diag_TR : LEMMA forall (P:(Diag[n])) : TR(P) = zero[n-1]
+  diag_BL : LEMMA forall (P:(Diag[n])) : BL(P) = zero[n-1]
+
   mul_diag_bloc : LEMMA forall (P, Q:SqMat[n-1], A, B : Vec[n-1], a, b:real) :
-    BCons(P, A, B, a) * BCons(Q, zero[n-1], zero[n-1], b) = BCons(P * Q, a * A, *[n-1](transpose(Q), B), a * b)
+    BCons(Q, zero[n-1], zero[n-1], b) * BCons(P, A, B, a) = BCons(Q * P, *[n-1](Q, A), b * B, b * a)
+
+  mul_bloc_diag : LEMMA forall (P, Q:SqMat[n-1], A, B : Vec[n-1], a, b:real) :
+    BCons(P, A, B, a) * BCons(Q, zero[n-1], zero[n-1], b) = BCons(P * Q, b * A, *[n-1](transpose(Q), B), a * b)
 
   transpose_bloc : LEMMA forall (P:SqMat[n-1], A, B : Vec[n-1], a:real) :
     transpose(BCons(P, A, B, a)) = BCons(transpose(P), B, A, a)
@@ -127,10 +149,9 @@ lemmas[n:upfrom[1]] : THEORY BEGIN
   lem3 : LEMMA forall (D: (Diag[n-1]), G:VectorN(n-1), a:real) :
     exists (x:real) : spectrum(BCons[n](D, G, G, a))(x)
 
-  lem4 : LEMMA forall (S:(Sym), x:real) :
+  lem4 : LEMMA forall (S:(Sym[n]), x:real) :
     spectrum(S)(x) IMPLIES
       exists (O:(Orth), A:(Sym[n-1])) : S = O * (BCons[n](A, zero[n-1], zero[n-1], x) * transpose(O))
-
 
   lem5 : LEMMA
     forall (S : (Sym[1])) :

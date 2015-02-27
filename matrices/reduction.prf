@@ -78,13 +78,16 @@
  (BCons_TCC1 0
   (BCons_TCC1-1 nil 3633793622 ("" (existence-tcc) nil nil) nil nil))
  (mul_diag_bloc_TCC1 0
-  (mul_diag_bloc_TCC1-1 nil 3633882948 ("" (subtype-tcc) nil nil) nil
+  (mul_diag_bloc_TCC1-1 nil 3633976606 ("" (subtype-tcc) nil nil) nil
    nil))
  (mul_diag_bloc_TCC2 0
-  (mul_diag_bloc_TCC2-1 nil 3633891817 ("" (subtype-tcc) nil nil) nil
+  (mul_diag_bloc_TCC2-1 nil 3633976606 ("" (subtype-tcc) nil nil) nil
    nil))
- (mul_diag_bloc_TCC3 0
-  (mul_diag_bloc_TCC3-1 nil 3633891817 ("" (subtype-tcc) nil nil) nil
+ (mul_bloc_diag_TCC1 0
+  (mul_bloc_diag_TCC1-1 nil 3633882948 ("" (subtype-tcc) nil nil) nil
+   nil))
+ (mul_bloc_diag_TCC2 0
+  (mul_bloc_diag_TCC2-1 nil 3633891817 ("" (subtype-tcc) nil nil) nil
    nil)))
 (lemmas
  (lem4_TCC1 0
@@ -94,16 +97,19 @@
   (red-1 nil 3633798069
    (""
     (name "f"
-          "LAMBDA (x: predSup(1)): EXISTS (O: (Orth[x`1]), D: (Diag[x`1])): car(x`2) = o * (D * transpose(o))")
+          "LAMBDA (x: predSup(1)): Sym[x`1](car(x`2)) => EXISTS (O: (Orth[x`1]), D: (Diag[x`1])): car(x`2) = o * (D * transpose(o))")
     (("1" (lemma matRec)
       (("1" (instantiate -1 (1 f))
         (("1" (split)
           (("1" (rewrite -2 :dir RL)
             (("1" (skeep)
               (("1" (inst -1 ("(n, cons(S, null))"))
-                (("1" (skeep)
-                  (("1" (inst 1 O D)
-                    (("1" (rewrite -1 :dir RL) nil nil)) nil))
+                (("1" (prop)
+                  (("1" (skeep)
+                    (("1" (inst 1 O D)
+                      (("1" (rewrite -1 :dir RL) nil nil)) nil))
+                    nil)
+                   ("2" (delete 2) (("2" (grind) nil nil)) nil))
                   nil)
                  ("2" (delete 2) (("2" (grind) nil nil)) nil))
                 nil))
@@ -114,7 +120,7 @@
               (("2" (skeep)
                 (("2" (skeep)
                   (("2" (name "S" "car(x`2)")
-                    (("1" (case "rows(S) = n!1 + 1")
+                    (("2" (case "rows(S) = n!1 + 1")
                       (("1" (rewrite -2)
                         (("1"
                           (case "exists (x:real) : spectrum[n!1 + 1](S)(x)")
@@ -131,29 +137,24 @@
                                        -4
                                        "(n!1, cons(A, null))")
                                       (("1"
-                                        (skolem!)
+                                        (prop)
                                         (("1"
-                                          (beta)
+                                          (skolem!)
                                           (("1"
-                                            (instantiate
-                                             1
-                                             ("(o*BCons[n!1 + 1](oh!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], 1))"
-                                              "BCons[n!1 + 1](D!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], x!1)"))
+                                            (beta)
                                             (("1"
-                                              (rewrite transpose_mult)
+                                              (instantiate
+                                               1
+                                               ("(o*BCons[n!1 + 1](oh!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], 1))"
+                                                "BCons[n!1 + 1](D!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], x!1)"))
                                               (("1"
-                                                (rewrite
-                                                 transpose_bloc)
+                                                (hide -6)
                                                 (("1"
                                                   (rewrite
-                                                   matrix_mult_assoc
-                                                   :dir
-                                                   RL)
+                                                   transpose_mult)
                                                   (("1"
                                                     (rewrite
-                                                     matrix_mult_assoc
-                                                     :dir
-                                                     RL)
+                                                     transpose_bloc)
                                                     (("1"
                                                       (rewrite
                                                        matrix_mult_assoc
@@ -161,171 +162,213 @@
                                                        RL)
                                                       (("1"
                                                         (rewrite
-                                                         mul_diag_bloc)
+                                                         matrix_mult_assoc
+                                                         :dir
+                                                         RL)
                                                         (("1"
                                                           (rewrite
-                                                           mat_zero)
+                                                           matrix_mult_assoc
+                                                           :dir
+                                                           RL)
                                                           (("1"
                                                             (rewrite
-                                                             real_zero)
+                                                             mul_bloc_diag)
                                                             (("1"
                                                               (rewrite
-                                                               matrix_mult_assoc
-                                                               :dir
-                                                               RL)
+                                                               mat_zero)
                                                               (("1"
-                                                                (lemma
-                                                                 matrix_mult_assoc)
+                                                                (rewrite
+                                                                 real_zero)
                                                                 (("1"
-                                                                  (instantiate
-                                                                   -1
-                                                                   ("BCons[n!1 + 1](D!1 * transpose(oh!1), zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], x!1)"
-                                                                    "o"
-                                                                    "BCons[n!1 + 1](oh!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], 1)"))
+                                                                  (rewrite
+                                                                   matrix_mult_assoc
+                                                                   :dir
+                                                                   RL)
                                                                   (("1"
-                                                                    (prop)
+                                                                    (lemma
+                                                                     matrix_mult_assoc)
                                                                     (("1"
-                                                                      (replace
-                                                                       -1)
+                                                                      (instantiate
+                                                                       -1
+                                                                       ("BCons[n!1 + 1](D!1 * transpose(oh!1), zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], x!1)"
+                                                                        "o"
+                                                                        "BCons[n!1 + 1](oh!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], 1)"))
                                                                       (("1"
-                                                                        (rewrite
-                                                                         mul_diag_bloc)
+                                                                        (prop)
                                                                         (("1"
-                                                                          (delete
+                                                                          (replace
                                                                            -1)
                                                                           (("1"
                                                                             (rewrite
-                                                                             matrix_mult_assoc)
+                                                                             mul_bloc_diag)
                                                                             (("1"
-                                                                              (rewrite
-                                                                               matrix_mult_assoc)
+                                                                              (delete
+                                                                               -1)
                                                                               (("1"
                                                                                 (rewrite
                                                                                  matrix_mult_assoc)
                                                                                 (("1"
-                                                                                  (replace
-                                                                                   -4
-                                                                                   :dir
-                                                                                   RL)
+                                                                                  (rewrite
+                                                                                   matrix_mult_assoc)
                                                                                   (("1"
                                                                                     (rewrite
-                                                                                     real_zero)
+                                                                                     matrix_mult_assoc)
                                                                                     (("1"
-                                                                                      (rewrite
-                                                                                       mat_zero)
+                                                                                      (replace
+                                                                                       -5
+                                                                                       :dir
+                                                                                       RL)
                                                                                       (("1"
                                                                                         (rewrite
-                                                                                         -1)
+                                                                                         real_zero)
                                                                                         (("1"
-                                                                                          (hide-all-but
-                                                                                           1)
+                                                                                          (rewrite
+                                                                                           mat_zero)
                                                                                           (("1"
-                                                                                            (case
-                                                                                             "BCons[n!1 + 1](A, zero[n!1], zero[n!1], x!1) = BCons[1 + n!1](A, zero[n!1], zero[n!1], 1 * x!1)")
+                                                                                            (rewrite
+                                                                                             -1
+                                                                                             :dir
+                                                                                             RL)
                                                                                             (("1"
                                                                                               (rewrite
                                                                                                -1)
-                                                                                              nil
-                                                                                              nil)
-                                                                                             ("2"
-                                                                                              (delete
-                                                                                               2)
-                                                                                              (("2"
-                                                                                                (grind)
-                                                                                                nil
+                                                                                              (("1"
+                                                                                                (hide-all-but
+                                                                                                 1)
+                                                                                                (("1"
+                                                                                                  (case
+                                                                                                   "BCons[n!1 + 1](A, zero[n!1], zero[n!1], x!1) = BCons[1 + n!1](A, zero[n!1], zero[n!1], 1 * x!1)")
+                                                                                                  (("1"
+                                                                                                    (rewrite
+                                                                                                     -1)
+                                                                                                    nil
+                                                                                                    nil)
+                                                                                                   ("2"
+                                                                                                    (delete
+                                                                                                     2)
+                                                                                                    (("2"
+                                                                                                      (grind)
+                                                                                                      nil
+                                                                                                      nil))
+                                                                                                    nil))
+                                                                                                  nil))
                                                                                                 nil))
                                                                                               nil))
                                                                                             nil))
                                                                                           nil))
                                                                                         nil))
+                                                                                      nil)
+                                                                                     ("2"
+                                                                                      (delete
+                                                                                       1)
+                                                                                      (("2"
+                                                                                        (rewrite
+                                                                                         "null_bloc[n!1 + 1]"
+                                                                                         -1
+                                                                                         :dir
+                                                                                         RL)
+                                                                                        (("2"
+                                                                                          (grind)
+                                                                                          nil
+                                                                                          nil))
+                                                                                        nil))
+                                                                                      nil))
+                                                                                    nil)
+                                                                                   ("2"
+                                                                                    (hide-all-but
+                                                                                     -1)
+                                                                                    (("2"
+                                                                                      (lemma
+                                                                                       "null_bloc[n!1 + 1]")
+                                                                                      (("2"
+                                                                                        (grind)
+                                                                                        nil
+                                                                                        nil))
                                                                                       nil))
                                                                                     nil))
                                                                                   nil)
                                                                                  ("2"
-                                                                                  (delete
-                                                                                   1)
+                                                                                  (hide-all-but
+                                                                                   -1)
                                                                                   (("2"
-                                                                                    (rewrite
-                                                                                     "null_bloc[n!1 + 1]"
-                                                                                     -1
-                                                                                     :dir
-                                                                                     RL)
+                                                                                    (typepred
+                                                                                     "D!1")
                                                                                     (("2"
                                                                                       (grind)
                                                                                       nil
                                                                                       nil))
                                                                                     nil))
                                                                                   nil))
-                                                                                nil)
-                                                                               ("2"
-                                                                                (hide-all-but
-                                                                                 -1)
-                                                                                (("2"
-                                                                                  (typepred
-                                                                                   "D!1")
-                                                                                  (("2"
-                                                                                    (grind)
-                                                                                    nil
-                                                                                    nil))
-                                                                                  nil))
                                                                                 nil))
-                                                                              nil)
-                                                                             ("2"
-                                                                              (rewrite
-                                                                               "null_bloc[n!1 + 1]"
-                                                                               -1
-                                                                               :dir
-                                                                               RL)
+                                                                              nil))
+                                                                            nil))
+                                                                          nil)
+                                                                         ("2"
+                                                                          (rewrite
+                                                                           "null_bloc[n!1 + 1]"
+                                                                           -1
+                                                                           :dir
+                                                                           RL)
+                                                                          (("2"
+                                                                            (hide-all-but
+                                                                             -1)
+                                                                            (("2"
+                                                                              (lemma
+                                                                               "null_bloc[n!1 + 1]")
                                                                               (("2"
-                                                                                (hide-all-but
-                                                                                 -1)
-                                                                                (("2"
-                                                                                  (lemma
-                                                                                   "null_bloc[n!1 + 1]")
-                                                                                  (("2"
-                                                                                    (grind)
-                                                                                    nil
-                                                                                    nil))
-                                                                                  nil))
+                                                                                (grind)
+                                                                                nil
                                                                                 nil))
                                                                               nil))
                                                                             nil))
                                                                           nil))
                                                                         nil))
-                                                                      nil)
-                                                                     ("2"
-                                                                      (hide-all-but
-                                                                       -1)
+                                                                      nil))
+                                                                    nil)
+                                                                   ("2"
+                                                                    (hide-all-but
+                                                                     -1)
+                                                                    (("2"
+                                                                      (rewrite
+                                                                       "null_bloc[n!1 + 1]"
+                                                                       -1
+                                                                       :dir
+                                                                       RL)
                                                                       (("2"
-                                                                        (rewrite
-                                                                         "null_bloc[n!1 + 1]"
-                                                                         -1
-                                                                         :dir
-                                                                         RL)
-                                                                        (("2"
-                                                                          (grind)
-                                                                          nil
-                                                                          nil))
+                                                                        (grind)
+                                                                        nil
                                                                         nil))
                                                                       nil))
                                                                     nil))
                                                                   nil))
-                                                                nil)
-                                                               ("2"
-                                                                (hide-all-but
-                                                                 -1)
-                                                                (("2"
-                                                                  (rewrite
-                                                                   "null_bloc[n!1 + 1]"
-                                                                   -1
-                                                                   :dir
-                                                                   RL)
-                                                                  (("2"
-                                                                    (grind)
-                                                                    nil
-                                                                    nil))
-                                                                  nil))
                                                                 nil))
+                                                              nil))
+                                                            nil)
+                                                           ("2"
+                                                            (hide-all-but
+                                                             -1)
+                                                            (("2"
+                                                              (rewrite
+                                                               "null_bloc[n!1 + 1]"
+                                                               -1
+                                                               :dir
+                                                               RL)
+                                                              (("2"
+                                                                (grind)
+                                                                nil
+                                                                nil))
+                                                              nil))
+                                                            nil))
+                                                          nil)
+                                                         ("2"
+                                                          (hide-all-but
+                                                           -1)
+                                                          (("2"
+                                                            (lemma
+                                                             "null_bloc[n!1 + 1]")
+                                                            (("2"
+                                                              (grind)
+                                                              nil
                                                               nil))
                                                             nil))
                                                           nil))
@@ -334,191 +377,218 @@
                                                         (hide-all-but
                                                          -1)
                                                         (("2"
-                                                          (rewrite
-                                                           "null_bloc[n!1 + 1]"
-                                                           -1
-                                                           :dir
-                                                           RL)
+                                                          (typepred
+                                                           "D!1")
                                                           (("2"
                                                             (grind)
                                                             nil
                                                             nil))
                                                           nil))
                                                         nil))
-                                                      nil)
-                                                     ("2"
-                                                      (hide-all-but -1)
-                                                      (("2"
-                                                        (typepred
-                                                         "D!1")
-                                                        (("2"
-                                                          (grind)
-                                                          nil
-                                                          nil))
-                                                        nil))
                                                       nil))
-                                                    nil)
-                                                   ("2"
-                                                    (hide-all-but -1)
-                                                    (("2"
-                                                      (lemma
-                                                       "null_bloc[n!1 + 1]")
-                                                      (("2"
-                                                        (grind)
-                                                        nil
-                                                        nil))
-                                                      nil))
-                                                    nil))
-                                                  nil))
-                                                nil))
-                                              nil)
-                                             ("2"
-                                              (split)
-                                              (("1"
-                                                (rewrite rows_bloc)
-                                                (("1"
-                                                  (hide-all-but (1 -5))
-                                                  (("1"
-                                                    (grind)
-                                                    nil
                                                     nil))
                                                   nil))
                                                 nil)
                                                ("2"
-                                                (hide-all-but (-5 1))
-                                                (("2"
-                                                  (lemma
-                                                   "diag_bloc[n!1 + 1]")
-                                                  (("2"
-                                                    (instantiate
-                                                     -1
-                                                     ("D!1" "x!1"))
-                                                    (("2"
-                                                      (case
-                                                       "BCons[n!1 + 1](D!1, zero[n!1], zero[n!1], x!1) = BCons[n!1 + 1](D!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], x!1)")
-                                                      (("1"
-                                                        (rewrite -1)
-                                                        (("1"
-                                                          (name
-                                                           w
-                                                           "BCons[n!1 + 1](D!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], x!1)")
-                                                          (("1"
-                                                            (rewrite
-                                                             -1)
-                                                            (("1"
-                                                              (expand
-                                                               Diag)
-                                                              (("1"
-                                                                (skolem-typepred)
-                                                                (("1"
-                                                                  (grind)
-                                                                  nil
-                                                                  nil))
-                                                                nil))
-                                                              nil))
-                                                            nil))
-                                                          nil))
-                                                        nil)
-                                                       ("2"
-                                                        (propax)
-                                                        nil
-                                                        nil))
+                                                (split)
+                                                (("1"
+                                                  (rewrite rows_bloc)
+                                                  (("1"
+                                                    (hide-all-but
+                                                     (1 -5))
+                                                    (("1"
+                                                      (grind)
+                                                      nil
                                                       nil))
                                                     nil))
-                                                  nil))
-                                                nil))
-                                              nil)
-                                             ("3"
-                                              (delete -1)
-                                              (("3"
-                                                (lemma
-                                                 "orth_bloc[n!1+1]")
-                                                (("3"
-                                                  (prop)
-                                                  (("1"
-                                                    (typepred "oh!1")
-                                                    (("1"
+                                                  nil)
+                                                 ("2"
+                                                  (hide-all-but (-5 1))
+                                                  (("2"
+                                                    (lemma
+                                                     "diag_bloc[n!1 + 1]")
+                                                    (("2"
                                                       (instantiate
-                                                       -8
-                                                       ("oh!1"))
-                                                      (("1"
-                                                        (lemma
-                                                         "orth_mul[x`1]")
+                                                       -1
+                                                       ("D!1" "x!1"))
+                                                      (("2"
+                                                        (case
+                                                         "BCons[n!1 + 1](D!1, zero[n!1], zero[n!1], x!1) = BCons[n!1 + 1](D!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], x!1)")
                                                         (("1"
-                                                          (instantiate
-                                                           -1
-                                                           ("o"
-                                                            "BCons[n!1 + 1](oh!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], 1)"))
+                                                          (rewrite -1)
                                                           (("1"
-                                                            (propax)
-                                                            nil
-                                                            nil)
-                                                           ("2"
-                                                            (split)
+                                                            (name
+                                                             w
+                                                             "BCons[n!1 + 1](D!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], x!1)")
                                                             (("1"
-                                                              (delete
-                                                               2)
+                                                              (rewrite
+                                                               -1)
                                                               (("1"
-                                                                (rewrite
-                                                                 rows_bloc)
+                                                                (expand
+                                                                 Diag)
                                                                 (("1"
-                                                                  (hide-all-but
-                                                                   (-12
-                                                                    1))
+                                                                  (skolem-typepred)
                                                                   (("1"
                                                                     (grind)
                                                                     nil
                                                                     nil))
                                                                   nil))
                                                                 nil))
-                                                              nil)
-                                                             ("2"
-                                                              (delete
-                                                               2)
-                                                              (("2"
-                                                                (hide-all-but
-                                                                 (-8
-                                                                  -12
-                                                                  1))
-                                                                (("2"
-                                                                  (expand
-                                                                   Orth)
+                                                              nil))
+                                                            nil))
+                                                          nil)
+                                                         ("2"
+                                                          (propax)
+                                                          nil
+                                                          nil))
+                                                        nil))
+                                                      nil))
+                                                    nil))
+                                                  nil))
+                                                nil)
+                                               ("3"
+                                                (delete -1)
+                                                (("3"
+                                                  (delete -1)
+                                                  (("3"
+                                                    (lemma
+                                                     "orth_bloc[n!1+1]")
+                                                    (("3"
+                                                      (prop)
+                                                      (("1"
+                                                        (typepred
+                                                         "oh!1")
+                                                        (("1"
+                                                          (instantiate
+                                                           -8
+                                                           ("oh!1"))
+                                                          (("1"
+                                                            (lemma
+                                                             "orth_mul[x`1]")
+                                                            (("1"
+                                                              (instantiate
+                                                               -1
+                                                               ("o"
+                                                                "BCons[n!1 + 1](oh!1, zero[n!1 + 1 - 1], zero[n!1 + 1 - 1], 1)"))
+                                                              (("1"
+                                                                (propax)
+                                                                nil
+                                                                nil)
+                                                               ("2"
+                                                                (split)
+                                                                (("1"
+                                                                  (delete
+                                                                   2)
+                                                                  (("1"
+                                                                    (rewrite
+                                                                     rows_bloc)
+                                                                    (("1"
+                                                                      (hide-all-but
+                                                                       (-11
+                                                                        1))
+                                                                      (("1"
+                                                                        (grind)
+                                                                        nil
+                                                                        nil))
+                                                                      nil))
+                                                                    nil))
+                                                                  nil)
+                                                                 ("2"
+                                                                  (delete
+                                                                   2)
                                                                   (("2"
-                                                                    (expand
-                                                                     Id)
+                                                                    (hide-all-but
+                                                                     (-8
+                                                                      -11
+                                                                      1))
                                                                     (("2"
                                                                       (expand
-                                                                       Id)
+                                                                       Orth)
                                                                       (("2"
-                                                                        (rewrite
-                                                                         -2)
+                                                                        (expand
+                                                                         Id)
                                                                         (("2"
-                                                                          (rewrite
-                                                                           -1
-                                                                           :dir
-                                                                           RL)
+                                                                          (expand
+                                                                           Id)
                                                                           (("2"
-                                                                            (case
-                                                                             "zero[n!1 + 1 - 1] = zero[n!1]")
-                                                                            (("1"
+                                                                            (rewrite
+                                                                             -2)
+                                                                            (("2"
                                                                               (rewrite
-                                                                               -1)
-                                                                              (("1"
+                                                                               -1
+                                                                               :dir
+                                                                               RL)
+                                                                              (("2"
                                                                                 (case
-                                                                                 "BCons[n!1 + 1](oh!1, zero[n!1], zero[n!1], 1) = BCons[1 + n!1](oh!1, zero[n!1], zero[n!1], 1)")
+                                                                                 "zero[n!1 + 1 - 1] = zero[n!1]")
                                                                                 (("1"
                                                                                   (rewrite
                                                                                    -1)
-                                                                                  nil
+                                                                                  (("1"
+                                                                                    (case
+                                                                                     "BCons[n!1 + 1](oh!1, zero[n!1], zero[n!1], 1) = BCons[1 + n!1](oh!1, zero[n!1], zero[n!1], 1)")
+                                                                                    (("1"
+                                                                                      (rewrite
+                                                                                       -1)
+                                                                                      nil
+                                                                                      nil)
+                                                                                     ("2"
+                                                                                      (propax)
+                                                                                      nil
+                                                                                      nil))
+                                                                                    nil))
                                                                                   nil)
                                                                                  ("2"
                                                                                   (propax)
                                                                                   nil
                                                                                   nil))
                                                                                 nil))
-                                                                              nil)
-                                                                             ("2"
-                                                                              (propax)
+                                                                              nil))
+                                                                            nil))
+                                                                          nil))
+                                                                        nil))
+                                                                      nil))
+                                                                    nil))
+                                                                  nil))
+                                                                nil)
+                                                               ("3"
+                                                                (delete
+                                                                 2)
+                                                                (("3"
+                                                                  (split)
+                                                                  (("1"
+                                                                    (typepred
+                                                                     o)
+                                                                    (("1"
+                                                                      (rewrite
+                                                                       -6)
+                                                                      (("1"
+                                                                        (rewrite
+                                                                         -17)
+                                                                        nil
+                                                                        nil))
+                                                                      nil))
+                                                                    nil)
+                                                                   ("2"
+                                                                    (typepred
+                                                                     o)
+                                                                    (("2"
+                                                                      (hide-all-but
+                                                                       (-7
+                                                                        -18
+                                                                        1))
+                                                                      (("2"
+                                                                        (expand
+                                                                         Orth)
+                                                                        (("2"
+                                                                          (expand
+                                                                           Id)
+                                                                          (("2"
+                                                                            (expand
+                                                                             Id)
+                                                                            (("2"
+                                                                              (rewrite
+                                                                               -2)
                                                                               nil
                                                                               nil))
                                                                             nil))
@@ -529,126 +599,112 @@
                                                                   nil))
                                                                 nil))
                                                               nil))
-                                                            nil)
-                                                           ("3"
-                                                            (delete 2)
-                                                            (("3"
-                                                              (split)
-                                                              (("1"
-                                                                (typepred
-                                                                 o)
-                                                                (("1"
-                                                                  (rewrite
-                                                                   -6)
-                                                                  (("1"
-                                                                    (rewrite
-                                                                     -18)
-                                                                    nil
-                                                                    nil))
-                                                                  nil))
-                                                                nil)
-                                                               ("2"
-                                                                (typepred
-                                                                 o)
-                                                                (("2"
-                                                                  (hide-all-but
-                                                                   (-7
-                                                                    -19
-                                                                    1))
-                                                                  (("2"
-                                                                    (expand
-                                                                     Orth)
-                                                                    (("2"
-                                                                      (expand
-                                                                       Id)
-                                                                      (("2"
-                                                                        (expand
-                                                                         Id)
-                                                                        (("2"
-                                                                          (rewrite
-                                                                           -2)
-                                                                          nil
-                                                                          nil))
-                                                                        nil))
-                                                                      nil))
-                                                                    nil))
-                                                                  nil))
+                                                            nil))
+                                                          nil))
+                                                        nil)
+                                                       ("2"
+                                                        (rewrite
+                                                         rows_mult)
+                                                        (("2"
+                                                          (hide-all-but
+                                                           (-4 1))
+                                                          (("2"
+                                                            (typepred
+                                                             o)
+                                                            (("2"
+                                                              (rewrite
+                                                               -6)
+                                                              (("2"
+                                                                (rewrite
+                                                                 -7)
+                                                                nil
                                                                 nil))
                                                               nil))
                                                             nil))
                                                           nil))
-                                                        nil))
-                                                      nil))
-                                                    nil)
-                                                   ("2"
-                                                    (rewrite rows_mult)
-                                                    (("2"
-                                                      (hide-all-but
-                                                       (-5 1))
-                                                      (("2"
-                                                        (typepred o)
-                                                        (("2"
-                                                          (rewrite -6)
-                                                          (("2"
+                                                        nil)
+                                                       ("3"
+                                                        (rewrite
+                                                         rows_mult)
+                                                        (("3"
+                                                          (rewrite
+                                                           columns_mult)
+                                                          (("1"
                                                             (rewrite
-                                                             -7)
-                                                            nil
+                                                             columns_bloc)
+                                                            (("1"
+                                                              (typepred
+                                                               o)
+                                                              (("1"
+                                                                (propax)
+                                                                nil
+                                                                nil))
+                                                              nil))
+                                                            nil)
+                                                           ("2"
+                                                            (delete 1)
+                                                            (("2"
+                                                              (typepred
+                                                               o)
+                                                              (("2"
+                                                                (grind)
+                                                                nil
+                                                                nil))
+                                                              nil))
                                                             nil))
                                                           nil))
-                                                        nil))
-                                                      nil))
-                                                    nil)
-                                                   ("3"
-                                                    (rewrite rows_mult)
-                                                    (("3"
-                                                      (rewrite
-                                                       columns_mult)
-                                                      (("1"
-                                                        (postpone)
-                                                        nil
                                                         nil)
-                                                       ("2"
-                                                        (delete 1)
-                                                        (("2"
+                                                       ("4"
+                                                        (rewrite
+                                                         rows_mult)
+                                                        (("4"
                                                           (typepred o)
-                                                          (("2"
-                                                            (grind)
+                                                          (("4"
+                                                            (propax)
                                                             nil
                                                             nil))
                                                           nil))
-                                                        nil))
-                                                      nil))
-                                                    nil)
-                                                   ("4"
-                                                    (rewrite rows_mult)
-                                                    (("4"
-                                                      (typepred o)
-                                                      (("4"
-                                                        (propax)
-                                                        nil
-                                                        nil))
-                                                      nil))
-                                                    nil)
-                                                   ("5"
-                                                    (typepred o)
-                                                    (("5"
-                                                      (rewrite
-                                                       columns_mult)
-                                                      (("1"
-                                                        (postpone)
-                                                        nil
                                                         nil)
-                                                       ("2"
-                                                        (delete 1)
-                                                        (("2"
-                                                          (grind)
-                                                          nil
+                                                       ("5"
+                                                        (typepred o)
+                                                        (("5"
+                                                          (rewrite
+                                                           columns_mult)
+                                                          (("1"
+                                                            (rewrite
+                                                             columns_bloc)
+                                                            (("1"
+                                                              (hide-all-but
+                                                               1)
+                                                              (("1"
+                                                                (grind)
+                                                                nil
+                                                                nil))
+                                                              nil))
+                                                            nil)
+                                                           ("2"
+                                                            (delete 1)
+                                                            (("2"
+                                                              (grind)
+                                                              nil
+                                                              nil))
+                                                            nil))
                                                           nil))
                                                         nil))
                                                       nil))
                                                     nil))
                                                   nil))
                                                 nil))
+                                              nil))
+                                            nil))
+                                          nil)
+                                         ("2"
+                                          (delete 2)
+                                          (("2"
+                                            (typepred A)
+                                            (("2"
+                                              (hide-all-but (-7 1))
+                                              (("2" (grind) nil nil))
                                               nil))
                                             nil))
                                           nil))
@@ -713,30 +769,698 @@
                                     (expand S)
                                     (("2"
                                       (typepred x)
-                                      (("2" (postpone) nil nil))
+                                      (("2"
+                                        (hide-all-but (-8 -7 1))
+                                        (("2"
+                                          (expand Sym)
+                                          (("2" (propax) nil nil))
+                                          nil))
+                                        nil))
                                       nil))
                                     nil))
                                   nil))
                                 nil))
                               nil))
                             nil)
-                           ("2" (postpone) nil nil)
-                           ("3" (postpone) nil nil))
+                           ("2" (delete 2)
+                            (("2"
+                              (instantiate -2
+                               "(n!1, cons(TL[n!1 + 1](S), null))")
+                              (("1"
+                                (prop)
+                                (("1"
+                                  (skeep)
+                                  (("1"
+                                    (lemma "lem3[n!1 + 1]")
+                                    (("1"
+                                      (instantiate
+                                       -1
+                                       ("D"
+                                        "*[n!1](transpose(o), TR[n!1 + 1](S))"
+                                        "BR[n!1 + 1](S)"))
+                                      (("1"
+                                        (skeep)
+                                        (("1"
+                                          (instantiate 1 "x!1")
+                                          (("1"
+                                            (lemma
+                                             "sim_eigen[n!1 + 1]")
+                                            (("1"
+                                              (instantiate
+                                               -1
+                                               (S
+                                                "BCons[n!1 + 1](o, zero[n!1], zero[n!1], 1)"
+                                                "x!1"))
+                                              (("1"
+                                                (replace -1)
+                                                (("1"
+                                                  (delete -1)
+                                                  (("1"
+                                                    (rewrite
+                                                     transpose_bloc)
+                                                    (("1"
+                                                      (lemma
+                                                       "id_bloc[n!1+1]")
+                                                      (("1"
+                                                        (instantiate
+                                                         -1
+                                                         S)
+                                                        (("1"
+                                                          (replace
+                                                           -1
+                                                           1
+                                                           :dir
+                                                           RL)
+                                                          (("1"
+                                                            (rewrite
+                                                             mul_bloc_diag)
+                                                            (("1"
+                                                              (rewrite
+                                                               mul_diag_bloc)
+                                                              (("1"
+                                                                (rewrite
+                                                                 "unit_vec[n!1]")
+                                                                (("1"
+                                                                  (assert)
+                                                                  (("1"
+                                                                    (rewrite
+                                                                     -3)
+                                                                    (("1"
+                                                                      (rewrite
+                                                                       sym_TRBL)
+                                                                      (("1"
+                                                                        (case
+                                                                         "transpose(o) * (o * (D * transpose(o)) * o) = D")
+                                                                        (("1"
+                                                                          (rewrite
+                                                                           -1)
+                                                                          (("1"
+                                                                            (hide-all-but
+                                                                             (-2
+                                                                              1))
+                                                                            (("1"
+                                                                              (case
+                                                                               "n!1 + 1 = 1 + n!1")
+                                                                              (("1"
+                                                                                (replace
+                                                                                 -1
+                                                                                 :actuals?
+                                                                                 T)
+                                                                                (("1"
+                                                                                  (delete
+                                                                                   -1)
+                                                                                  (("1"
+                                                                                    (expand
+                                                                                     spectrum)
+                                                                                    (("1"
+                                                                                      (skeep)
+                                                                                      (("1"
+                                                                                        (instantiate
+                                                                                         1
+                                                                                         v)
+                                                                                        (("1"
+                                                                                          (rewrite
+                                                                                           -1
+                                                                                           :dir
+                                                                                           RL)
+                                                                                          (("1"
+                                                                                            (rewrite
+                                                                                             "congruence")
+                                                                                            (("1"
+                                                                                              (delete
+                                                                                               2)
+                                                                                              (("1"
+                                                                                                (rewrite
+                                                                                                 "congruence")
+                                                                                                (("1"
+                                                                                                  (delete
+                                                                                                   2)
+                                                                                                  (("1"
+                                                                                                    (rewrite
+                                                                                                     "unit_vec[n!1]")
+                                                                                                    (("1"
+                                                                                                      (grind)
+                                                                                                      nil
+                                                                                                      nil))
+                                                                                                    nil))
+                                                                                                  nil))
+                                                                                                nil))
+                                                                                              nil))
+                                                                                            nil))
+                                                                                          nil))
+                                                                                        nil))
+                                                                                      nil))
+                                                                                    nil))
+                                                                                  nil))
+                                                                                nil)
+                                                                               ("2"
+                                                                                (delete
+                                                                                 (2
+                                                                                  -1))
+                                                                                (("2"
+                                                                                  (grind)
+                                                                                  nil
+                                                                                  nil))
+                                                                                nil))
+                                                                              nil))
+                                                                            nil))
+                                                                          nil)
+                                                                         ("2"
+                                                                          (delete
+                                                                           2)
+                                                                          (("2"
+                                                                            (rewrite
+                                                                             matrix_mult_assoc)
+                                                                            (("1"
+                                                                              (rewrite
+                                                                               matrix_mult_assoc)
+                                                                              (("1"
+                                                                                (case
+                                                                                 "transpose(o) * o = Id[n!1]")
+                                                                                (("1"
+                                                                                  (replace
+                                                                                   -1)
+                                                                                  (("1"
+                                                                                    (expand
+                                                                                     Id)
+                                                                                    (("1"
+                                                                                      (rewrite
+                                                                                       mult_Id_right)
+                                                                                      (("1"
+                                                                                        (rewrite
+                                                                                         matrix_mult_assoc
+                                                                                         :dir
+                                                                                         RL)
+                                                                                        (("1"
+                                                                                          (replace
+                                                                                           -1)
+                                                                                          (("1"
+                                                                                            (rewrite
+                                                                                             mult_Id_left)
+                                                                                            nil
+                                                                                            nil))
+                                                                                          nil)
+                                                                                         ("2"
+                                                                                          (grind)
+                                                                                          nil
+                                                                                          nil))
+                                                                                        nil))
+                                                                                      nil))
+                                                                                    nil))
+                                                                                  nil)
+                                                                                 ("2"
+                                                                                  (delete
+                                                                                   2)
+                                                                                  (("2"
+                                                                                    (typepred
+                                                                                     o)
+                                                                                    (("2"
+                                                                                      (expand
+                                                                                       Orth)
+                                                                                      (("2"
+                                                                                        (rewrite
+                                                                                         "orth_inv[n!1]")
+                                                                                        nil
+                                                                                        nil))
+                                                                                      nil))
+                                                                                    nil))
+                                                                                  nil))
+                                                                                nil)
+                                                                               ("2"
+                                                                                (delete
+                                                                                 -2
+                                                                                 -3)
+                                                                                (("2"
+                                                                                  (delete
+                                                                                   -4)
+                                                                                  (("2"
+                                                                                    (grind)
+                                                                                    nil
+                                                                                    nil))
+                                                                                  nil))
+                                                                                nil))
+                                                                              nil)
+                                                                             ("2"
+                                                                              (typepred
+                                                                               "D * transpose(o)")
+                                                                              (("2"
+                                                                                (delete
+                                                                                 -7
+                                                                                 -8
+                                                                                 -11
+                                                                                 -1
+                                                                                 -3
+                                                                                 -4
+                                                                                 -5)
+                                                                                (("2"
+                                                                                  (expand
+                                                                                   length)
+                                                                                  (("2"
+                                                                                    (expand
+                                                                                     rows)
+                                                                                    (("2"
+                                                                                      (expand
+                                                                                       length)
+                                                                                      (("2"
+                                                                                        (lift-if)
+                                                                                        (("2"
+                                                                                          (prop)
+                                                                                          (("1"
+                                                                                            (grind)
+                                                                                            nil
+                                                                                            nil)
+                                                                                           ("2"
+                                                                                            (typepred
+                                                                                             D)
+                                                                                            (("2"
+                                                                                              (typepred
+                                                                                               S)
+                                                                                              (("2"
+                                                                                                (grind)
+                                                                                                nil
+                                                                                                nil))
+                                                                                              nil))
+                                                                                            nil)
+                                                                                           ("3"
+                                                                                            (delete
+                                                                                             2)
+                                                                                            (("3"
+                                                                                              (typepred
+                                                                                               D)
+                                                                                              (("3"
+                                                                                                (typepred
+                                                                                                 S)
+                                                                                                (("3"
+                                                                                                  (grind)
+                                                                                                  nil
+                                                                                                  nil))
+                                                                                                nil))
+                                                                                              nil))
+                                                                                            nil)
+                                                                                           ("4"
+                                                                                            (grind)
+                                                                                            nil
+                                                                                            nil))
+                                                                                          nil))
+                                                                                        nil))
+                                                                                      nil))
+                                                                                    nil))
+                                                                                  nil))
+                                                                                nil))
+                                                                              nil))
+                                                                            nil))
+                                                                          nil))
+                                                                        nil)
+                                                                       ("2"
+                                                                        (delete
+                                                                         2)
+                                                                        (("2"
+                                                                          (hide-all-but
+                                                                           (-5
+                                                                            1))
+                                                                          (("2"
+                                                                            (grind)
+                                                                            nil
+                                                                            nil))
+                                                                          nil))
+                                                                        nil))
+                                                                      nil))
+                                                                    nil))
+                                                                  nil))
+                                                                nil))
+                                                              nil))
+                                                            nil))
+                                                          nil))
+                                                        nil))
+                                                      nil))
+                                                    nil))
+                                                  nil))
+                                                nil)
+                                               ("2"
+                                                (delete 2)
+                                                (("2"
+                                                  (rewrite orth_bloc)
+                                                  nil
+                                                  nil))
+                                                nil))
+                                              nil))
+                                            nil))
+                                          nil))
+                                        nil)
+                                       ("2"
+                                        (delete 2)
+                                        (("2"
+                                          (rewrite rows_transpose)
+                                          (("2"
+                                            (rewrite columns_transpose)
+                                            (("2"
+                                              (typepred o)
+                                              (("2"
+                                                (rewrite -5)
+                                                nil
+                                                nil))
+                                              nil))
+                                            nil))
+                                          nil))
+                                        nil))
+                                      nil))
+                                    nil))
+                                  nil)
+                                 ("2"
+                                  (delete 2)
+                                  (("2"
+                                    (assert)
+                                    (("2"
+                                      (rewrite sym_TL)
+                                      (("2"
+                                        (delete 2)
+                                        (("2"
+                                          (expand Sym)
+                                          (("2" (propax) nil nil))
+                                          nil))
+                                        nil))
+                                      nil))
+                                    nil))
+                                  nil))
+                                nil)
+                               ("2"
+                                (delete 2)
+                                (("2"
+                                  (skeep)
+                                  (("2"
+                                    (expand member)
+                                    (("2"
+                                      (expand member)
+                                      (("2"
+                                        (rewrite -1)
+                                        (("2"
+                                          (rewrite rows_TL)
+                                          nil
+                                          nil))
+                                        nil))
+                                      nil))
+                                    nil))
+                                  nil))
+                                nil)
+                               ("3"
+                                (delete 2 -2 -3)
+                                (("3" (grind) nil nil))
+                                nil))
+                              nil))
+                            nil)
+                           ("3" (delete 2 -2 -3 -4)
+                            (("3" (grind) nil nil)) nil))
                           nil))
                         nil)
-                       ("2" (postpone) nil nil))
-                      nil)
-                     ("2" (postpone) nil nil))
+                       ("2" (delete 2 -4 -2)
+                        (("2" (typepred x)
+                          (("2" (rewrite -3)
+                            (("2" (expand member)
+                              (("2" (grind) nil nil)) nil))
+                            nil))
+                          nil))
+                        nil))
+                      nil))
                     nil))
                   nil))
                 nil))
               nil))
             nil)
-           ("3" (postpone) nil nil))
+           ("3" (delete 2)
+            (("3" (rewrite -1 :dir RL)
+              (("3" (lemma lem5[1])
+                (("3" (skeep)
+                  (("3" (instantiate -1 "car(x`2)")
+                    (("1" (delete -3)
+                      (("1" (skeep)
+                        (("1" (instantiate 1 (o D))
+                          (("1" (propax) nil nil)
+                           ("2" (typepred D)
+                            (("2" (split 1)
+                              (("1" (rewrite -9) nil nil)
+                               ("2"
+                                (expand Diag)
+                                (("2"
+                                  (hide-all-but (-7 -9 1))
+                                  (("2" (grind) nil nil))
+                                  nil))
+                                nil))
+                              nil))
+                            nil)
+                           ("3" (typepred o)
+                            (("3" (split)
+                              (("1"
+                                (split)
+                                (("1" (rewrite -9) nil nil)
+                                 ("2"
+                                  (hide-all-but (-7 -9 1))
+                                  (("2"
+                                    (expand Orth)
+                                    (("2"
+                                      (expand Id)
+                                      (("2"
+                                        (expand Id)
+                                        (("2" (rewrite -2) nil nil))
+                                        nil))
+                                      nil))
+                                    nil))
+                                  nil))
+                                nil)
+                               ("2"
+                                (split)
+                                (("1" (rewrite -9) nil nil)
+                                 ("2"
+                                  (expand Orth)
+                                  (("2"
+                                    (expand Id)
+                                    (("2"
+                                      (expand Id)
+                                      (("2" (rewrite -9) nil nil))
+                                      nil))
+                                    nil))
+                                  nil))
+                                nil))
+                              nil))
+                            nil))
+                          nil))
+                        nil))
+                      nil)
+                     ("2" (delete 2)
+                      (("2" (split)
+                        (("1" (typepred x)
+                          (("1" (rewrite -3)
+                            (("1" (expand member)
+                              (("1"
+                                (hide-all-but (-2 1))
+                                (("1" (grind) nil nil))
+                                nil))
+                              nil))
+                            nil))
+                          nil)
+                         ("2" (expand Sym) (("2" (propax) nil nil))
+                          nil))
+                        nil))
+                      nil))
+                    nil))
+                  nil))
+                nil))
+              nil))
+            nil))
           nil))
         nil))
       nil)
-     ("2" (postpone) nil nil))
+     ("2" (delete 2)
+      (("2" (skeep)
+        (("2" (skeep)
+          (("2" (delete -1)
+            (("2" (typepred x) (("2" (grind) nil nil)) nil)) nil))
+          nil))
+        nil))
+      nil)
+     ("3" (delete 2)
+      (("3" (skeep)
+        (("3" (typepred x)
+          (("3" (grind)
+            (("3" (expand member) (("3" (grind) nil nil)) nil)) nil))
+          nil))
+        nil))
+      nil)
+     ("4" (delete 2) (("4" (grind) nil nil)) nil))
     nil)
-   nil shostak)))
+   ((matRec formula-decl nil recursor nil)
+    (NOT const-decl "[bool -> bool]" booleans nil)
+    (length_singleton formula-decl nil more_list_props "structures/")
+    (null adt-constructor-decl "(null?)" list_adt nil)
+    (S skolem-const-decl "(Sym)" reduction nil)
+    (n formal-const-decl "upfrom[1]" reduction nil)
+    (upfrom nonempty-type-eq-decl nil int_types nil)
+    (cons adt-constructor-decl "[[T, list] -> (cons?)]" list_adt nil)
+    (real_gt_is_strict_total_order name-judgement
+     "(strict_total_order?[real])" real_props nil)
+    (posint_plus_nnint_is_posint application-judgement "posint"
+     integers nil)
+    (numfield nonempty-type-eq-decl nil number_fields nil)
+    (+ const-decl "[numfield, numfield -> numfield]" number_fields nil)
+    (spectrum const-decl "set[real]" eigen nil)
+    (S skolem-const-decl "Square" reduction nil)
+    (form_matrix const-decl "{M: MatrixMN(m, n) |
+         FORALL (i: below(m), j: below(n)): nth(row(M)(i), j) = F(i, j)}"
+     matrices nil)
+    (transpose_mult formula-decl nil matrices nil)
+    (matrix_mult_assoc formula-decl nil matrices nil)
+    (mat_zero formula-decl nil myMatrices nil)
+    (null_bloc formula-decl nil bloc nil)
+    (real_minus_real_is_real application-judgement "real" reals nil)
+    (array2list_it def-decl
+     "{l: listn(n - i) | FORALL (j: subrange(i, n - 1)): a(j) = nth(l, j - i)}"
+     array2list "structures/")
+    (array2list const-decl
+     "{l: listn(n) | FORALL (i: below(n)): a(i) = nth(l, i)}"
+     array2list "structures/")
+    (zero const-decl "VectorN(n)" matrices nil)
+    (* const-decl "VectorN(length(v2))" matrices nil)
+    (* const-decl "[SqMat, Vec -> Vec]" myMatrices nil)
+    (* const-decl "[numfield, numfield -> numfield]" number_fields nil)
+    (subrange type-eq-decl nil integers nil)
+    (listn type-eq-decl nil listn "structures/")
+    (upto nonempty-type-eq-decl nil naturalnumbers nil)
+    (real_zero formula-decl nil myMatrices nil)
+    (real_times_real_is_real application-judgement "real" reals nil)
+    (mul_bloc_diag formula-decl nil bloc nil)
+    (int_minus_int_is_int application-judgement "int" integers nil)
+    (transpose_bloc formula-decl nil bloc nil)
+    (zero const-decl "Vec" myMatrices nil)
+    (- const-decl "[numfield, numfield -> numfield]" number_fields nil)
+    (BCons const-decl "SquareMatrix(n)" bloc nil)
+    (SquareMatrix type-eq-decl nil matrices nil)
+    (Vec type-eq-decl nil myMatrices nil)
+    (real_lt_is_strict_total_order name-judgement
+     "(strict_total_order?[real])" real_props nil)
+    (/= const-decl "boolean" notequal nil)
+    (access const-decl "real" matrices nil)
+    (diag_bloc formula-decl nil bloc nil)
+    (rows_bloc formula-decl nil bloc nil)
+    (n!1 skolem-const-decl "upfrom[1]" reduction nil)
+    (D!1 skolem-const-decl "(Diag[n!1])" reduction nil)
+    (x!1 skolem-const-decl "real" reduction nil)
+    (x skolem-const-decl "predSup(1)" reduction nil)
+    (Id const-decl "{M: SquareMatrix(pm) |
+         (FORALL (i, j):
+            entry(M)(i, j) = IF i < pm AND i = j THEN 1 ELSE 0 ENDIF)
+          AND
+          (FORALL (pn: posnat, N: MatrixMN(pm, pn)): M * N = N) AND
+           (FORALL (pn: posnat, N: MatrixMN(pn, pm)): N * M = N)}"
+     matrices nil)
+    (form_matrix_square application-judgement "FullMatrix" matrices
+     nil)
+    (Id const-decl "SqMat" myMatrices nil)
+    (orth_mul formula-decl nil orthogonality nil)
+    (rows_mult formula-decl nil matrices nil)
+    (columns_mult formula-decl nil matrices nil)
+    (columns_bloc formula-decl nil bloc nil)
+    (orth_bloc formula-decl nil bloc nil)
+    (O skolem-const-decl "(Orth)" reduction nil)
+    (oh!1 skolem-const-decl "(Orth[n!1])" reduction nil)
+    (A skolem-const-decl "(Sym[n!1])" reduction nil)
+    (NVec type-eq-decl nil myMatrices nil)
+    (v skolem-const-decl "NVec[1 + n!1]" reduction nil)
+    (real_ge_is_total_order name-judgement "(total_order?[real])"
+     real_props nil)
+    (lem4 formula-decl nil lemmas nil)
+    (sym_TL formula-decl nil bloc nil)
+    (id_bloc formula-decl nil bloc nil)
+    (mul_diag_bloc formula-decl nil bloc nil)
+    (sym_TRBL formula-decl nil bloc nil)
+    (max const-decl "{p: real | p >= m AND p >= n}" real_defs nil)
+    (nonneg_rat_max application-judgement
+     "{s: nonneg_rat | s >= q AND s >= r}" real_defs nil)
+    (nat_max application-judgement "{k: nat | i <= k AND j <= k}"
+     real_defs nil)
+    (nnint_plus_posint_is_posint application-judgement "posint"
+     integers nil)
+    (orth_inv formula-decl nil orthogonality nil)
+    (posnat nonempty-type-eq-decl nil integers nil)
+    (nonneg_int nonempty-type-eq-decl nil integers nil)
+    (mult_Id_right formula-decl nil matrices nil)
+    (dot def-decl "real" matrices nil)
+    (mult const-decl "{A: MatrixMN(rows(M), columns(N)) |
+         FORALL (i, j): entry(A)(i, j) = row(M)(i) * col(N)(j)}"
+     matrices nil)
+    (mult_Id_left formula-decl nil matrices nil)
+    (congruence formula-decl nil functions nil)
+    (unit_vec formula-decl nil myMatrices nil)
+    (BL const-decl "Vec[n - 1]" bloc nil)
+    (O skolem-const-decl "(Orth[n!1])" reduction nil)
+    (sim_eigen formula-decl nil orthogonality nil)
+    (TR const-decl "Vec[n - 1]" bloc nil)
+    (BR const-decl "real" bloc nil)
+    (rows_transpose formula-decl nil matrices nil)
+    (columns_transpose formula-decl nil matrices nil)
+    (lem3 formula-decl nil lemmas nil)
+    (TL const-decl "SqMat[n - 1]" bloc nil)
+    (rows_TL formula-decl nil bloc nil)
+    (D skolem-const-decl "(Diag[1])" reduction nil)
+    (x skolem-const-decl "predSup(1)" reduction nil)
+    (O skolem-const-decl "(Orth[1])" reduction nil)
+    (lem5 formula-decl nil lemmas nil)
+    (mult_full application-judgement "FullMatrix" matrices nil)
+    (number nonempty-type-decl nil numbers nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (number_field_pred const-decl "[number -> boolean]" number_fields
+     nil)
+    (number_field nonempty-type-from-decl nil number_fields nil)
+    (real_pred const-decl "[number_field -> boolean]" reals nil)
+    (real nonempty-type-from-decl nil reals nil)
+    (rational_pred const-decl "[real -> boolean]" rationals nil)
+    (rational nonempty-type-from-decl nil rationals nil)
+    (integer_pred const-decl "[rational -> boolean]" integers nil)
+    (int nonempty-type-eq-decl nil integers nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (>= const-decl "bool" reals nil)
+    (nat nonempty-type-eq-decl nil naturalnumbers nil)
+    (list type-decl nil list_adt nil)
+    (PRED type-eq-decl nil defined_types nil)
+    (every adt-def-decl "boolean" list_adt nil)
+    (AND const-decl "[bool, bool -> bool]" booleans nil)
+    (OR const-decl "[bool, bool -> bool]" booleans nil)
+    (null? adt-recognizer-decl "[list -> boolean]" list_adt nil)
+    (< const-decl "bool" reals nil)
+    (length def-decl "nat" list_props nil)
+    (below type-eq-decl nil naturalnumbers nil)
+    (= const-decl "[T, T -> boolean]" equalities nil)
+    (below type-eq-decl nil nat_types nil)
+    (nth def-decl "T" list_props nil) (> const-decl "bool" reals nil)
+    (Matrix type-eq-decl nil matrices nil)
+    (rows const-decl "nat" matrices nil)
+    (<= const-decl "bool" reals nil)
+    (columns def-decl "{c: nat |
+         (FORALL (i: below(length(M))): length(nth(M, i)) <= c) AND
+          (null?(M) AND c = 0 OR
+            (EXISTS (i: below(length(M))): length(nth(M, i)) = c))}"
+     matrices nil)
+    (FullMatrix type-eq-decl nil matrices nil)
+    (PosFullMatrix type-eq-decl nil matrices nil)
+    (Square type-eq-decl nil matrices nil)
+    (IMPLIES const-decl "[bool, bool -> bool]" booleans nil)
+    (member def-decl "bool" list_props nil)
+    (predSup type-eq-decl nil recursor nil)
+    (SqMat type-eq-decl nil myMatrices nil)
+    (set type-eq-decl nil sets nil)
+    (Sym const-decl "set[SqMat]" symmetry nil)
+    (cons? adt-recognizer-decl "[list -> boolean]" list_adt nil)
+    (car adt-accessor-decl "[(cons?) -> T]" list_adt nil)
+    (Orth const-decl "set[SqMat]" orthogonality nil)
+    (Diag const-decl "set[SqMat]" myMatrices nil)
+    (MatrixMN type-eq-decl nil matrices nil)
+    (entry const-decl "real" matrices nil)
+    (Vector type-eq-decl nil matrices nil)
+    (* const-decl "real" matrices nil)
+    (row const-decl "Vector" matrices nil)
+    (VectorN type-eq-decl nil matrices nil)
+    (col def-decl "VectorN(rows(M))" matrices nil)
+    (* const-decl "{A: MatrixMN(rows(M), columns(N)) |
+         FORALL (i, j): entry(A)(i, j) = row(M)(i) * col(N)(j)}"
+       matrices nil)
+    (transpose const-decl "PosFullMatrix" matrices nil))
+   shostak)))
 
